@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 def read_config(filepath):
     config = {}
     with open(filepath, 'r') as file:
