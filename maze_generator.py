@@ -2,9 +2,10 @@
 
 import typing
 
+
 class MazeGenerator:
     """Handles the creation and basic structure of the maze grid."""
-    
+
     NORTH: int = 1
     EAST: int = 2
     SOUTH: int = 4
@@ -20,7 +21,7 @@ class MazeGenerator:
             return self.grid[y][x]
         return None
 
-    def display_debug(self):
+    def display_debug(self) -> None:
         # Apenas para visualizar no terminal durante o desenvolvimento.
         for row in self.grid:
             print(row)
