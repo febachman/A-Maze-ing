@@ -8,5 +8,8 @@ if __name__ == "__main__":
         width=config["WIDTH"],
         height=config["HEIGHT"]
     )
+
+    generator.generate_maze((0, 0))
+
     print("\n##### A-MAZE-ING #####\n")
     generator.display_debug()

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import typing
+import random
 
 
 class MazeGenerator:
@@ -17,11 +18,13 @@ class MazeGenerator:
         self.grid = [[15 for _ in range(width)] for _ in range(height)]
 
     def get_cell(self, x: int, y: int) -> typing.Optional[int]:
+        """Return the cell value or None if the coordinates are invalid."""
         if 0 <= x < self.width and 0 <= y < self.height:
             return self.grid[y][x]
         return None
 
     def remove_wall(self, x: int, y: int, direction: int) -> bool:
+        """Remove a wall between a cell and its neighbor."""
         if self.get_cell(x, y) is None:
             return False
         # dicionário de opostos ~relação parede com parede
@@ -57,13 +60,39 @@ class MazeGenerator:
 
         return True
 
+    def generate_maze(self, cell: tuple[int, int]) -> None:
+        """Generate a maze using recursive backtracking."""
+        x, y = cell
+
+        directions: list[tuple[int, int, int]] = [
+            (self.NORTH, 0, -1),
+            (self.EAST, 1, 0),
+            (self.SOUTH, 0, 1),
+            (self.WEST, -1, 0),
+        ]
+
+        random.shuffle(directions)
+
+        for direction, dx, dy in directions:
+            nx = x + dx
+            ny = y + dy
+
+            if self.get_cell(nx, ny) is None:
+                continue
+
+            if self.get_cell(nx, ny) != 15:
+                continue
+
+            self.remove_wall(x, y, direction)
+            self.generate_maze((nx, ny))
+
     def display_debug(self) -> None:
-        # Apenas para visualizar no terminal durante o desenvolvimento.
+        """Display the maze grid for debugging."""
         for row in self.grid:
             print(row)
 
 
 if __name__ == "__main__":
     maze = MazeGenerator(width=5, height=5)
-    maze.remove_wall(0, 0, MazeGenerator.EAST)
+    maze.generate_maze((0, 0))
     maze.display_debug()
