@@ -21,6 +21,42 @@ class MazeGenerator:
             return self.grid[y][x]
         return None
 
+    def remove_wall(self, x: int, y: int, direction: int) -> bool:
+        if self.get_cell(x, y) is None:
+            return False
+        # dicionário de opostos ~relação parede com parede
+        # ex se remover a parece north de uma célula
+        # precisa remover a parede south da célula de cima
+        opposites = {
+            self.NORTH: self.SOUTH,
+            self.EAST: self.WEST,
+            self.SOUTH: self.NORTH,
+            self.WEST: self.EAST,
+        }
+        # dicionário de movimentos ~relação direção com coordenada
+        # para qual célula vou se seguir nessa direção
+        movements = {
+            self.NORTH: (0, -1),
+            self.EAST: (1, 0),
+            self.SOUTH: (0, 1),
+            self.WEST: (-1, 0),
+        }
+
+        if direction not in opposites:
+            return False
+
+        dx, dy = movements[direction]
+        nx = x + dx
+        ny = y + dy
+
+        if self.get_cell(nx, ny) is None:
+            return False
+
+        self.grid[y][x] &= ~direction
+        self.grid[ny][nx] &= ~opposites[direction]
+
+        return True
+
     def display_debug(self) -> None:
         # Apenas para visualizar no terminal durante o desenvolvimento.
         for row in self.grid:
@@ -29,5 +65,5 @@ class MazeGenerator:
 
 if __name__ == "__main__":
     maze = MazeGenerator(width=5, height=5)
-    print("Grid 5x5 inicializado com valor 15 (paredes fechadas):")
+    maze.remove_wall(0, 0, MazeGenerator.EAST)
     maze.display_debug()

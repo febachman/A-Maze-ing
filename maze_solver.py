@@ -42,7 +42,7 @@ class MazeSolver:
 
         return neighbors
 
-    def solver(
+    def path_solver(
         self,
         start: typing.Tuple[int, int],
         exit_pos: typing.Tuple[int, int]
@@ -100,5 +100,5 @@ if __name__ == "__main__":
     gen = MazeGenerator(width=5, height=5)
     solver = MazeSolver(gen)
 
-    path = solver.solve_bfs((0, 0), (4, 4))
+    path = solver.path_solver((0, 0), (4, 4))
     print("Path found (expected None):", path)

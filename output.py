@@ -7,6 +7,6 @@ if __name__ == "__main__":
     generator = MazeGenerator(
         width=config["WIDTH"],
         height=config["HEIGHT"]
-    )   
+    )
     print("\n##### A-MAZE-ING #####\n")
     generator.display_debug()
