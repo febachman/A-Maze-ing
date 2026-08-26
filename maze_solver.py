@@ -95,6 +95,28 @@ class MazeSolver:
 
         return path
 
+    def path_directions(
+        self, path: typing.List[typing.Tuple[int, int]]
+    ) -> str:
+        """Convert a coordinate path into N/E/S/W directions."""
+        directions = []
+
+        for i in range(len(path) -1):
+            x1, y1 = path[i]
+            x2, y2 = path[i + 1]
+        
+        if x2 == x1 + 1:
+            directions.append("E")
+        elif x2 == x1 - 1:
+            directions.append("W")
+        elif y2 == y1 + 1:
+            directions.append("S")
+        elif y2 == y1 - 1:
+            directions.append("N")
+        else:
+            raise ValueError("Invalid path: cells are not adjacent")
+
+        return "".join(directions)
 
 if __name__ == "__main__":
     gen = MazeGenerator(width=5, height=5)
@@ -102,3 +124,7 @@ if __name__ == "__main__":
 
     path = solver.path_solver((0, 0), (4, 4))
     print("Path found (expected None):", path)
+
+    if path is not None:
+        directions = solver.path_to_directions(path)
+        print("Directions:", directions)
