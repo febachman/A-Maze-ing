@@ -73,10 +73,8 @@ class MazeGenerator:
         for direction, (dx, dy) in self.MOVEMENTS.items():
             nx = x + dx
             ny = y + dy
-            
             if self.get_cell(nx, ny) is not None and not self.visited[ny][nx]:
                 neighbors.append((direction, nx, ny))
-                
         return neighbors
 
     def generate_maze(self, start_cell: typing.Tuple[int, int]) -> None:
@@ -90,7 +88,6 @@ class MazeGenerator:
 
             if neighbors:
                 direction, nx, ny = self.randomizer.choice(neighbors)
-                
                 self.remove_wall(x, y, direction)
                 self.visited[ny][nx] = True
                 stack.append((nx, ny))
