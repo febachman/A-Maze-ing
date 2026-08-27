@@ -9,7 +9,7 @@ if __name__ == "__main__":
         height=config["HEIGHT"]
     )
 
-    generator.generate_maze((0, 0))
+    generator.generate_maze(config["ENTRY"])
 
     print("\n##### A-MAZE-ING #####\n")
     generator.display_debug()

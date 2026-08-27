@@ -67,26 +67,35 @@ class MazeGenerator:
 
         return True
 
-    def generate_maze(self, cell: tuple[int, int]) -> None:
-        """Generate a maze using recursive backtracking."""
-        x, y = cell
-        self.visited[y][x] = True
-
-        directions = list(self.MOVEMENTS.items())
-        self.randomizer.shuffle(directions)
-
-        for direction, (dx, dy) in directions:
+    def _get_unvisited_neighbors(self, x: int, y: int) -> typing.List[typing.Tuple[int, int, int]]:
+        """Return a list of valid, unvisited neighbors."""
+        neighbors = []
+        for direction, (dx, dy) in self.MOVEMENTS.items():
             nx = x + dx
             ny = y + dy
+            
+            if self.get_cell(nx, ny) is not None and not self.visited[ny][nx]:
+                neighbors.append((direction, nx, ny))
+                
+        return neighbors
 
-            if self.get_cell(nx, ny) is None:
-                continue
+    def generate_maze(self, start_cell: typing.Tuple[int, int]) -> None:
+        """Generate a maze using iterative backtracking (Clean Version)."""
+        stack = [start_cell]
+        self.visited[start_cell[1]][start_cell[0]] = True
 
-            if self.visited[ny][nx]:
-                continue
+        while stack:
+            x, y = stack[-1]
+            neighbors = self._get_unvisited_neighbors(x, y)
 
-            self.remove_wall(x, y, direction)
-            self.generate_maze((nx, ny))
+            if neighbors:
+                direction, nx, ny = self.randomizer.choice(neighbors)
+                
+                self.remove_wall(x, y, direction)
+                self.visited[ny][nx] = True
+                stack.append((nx, ny))
+            else:
+                stack.pop()
 
     def display_debug(self) -> None:
         """Display the maze grid for debugging."""

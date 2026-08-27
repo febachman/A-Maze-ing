@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
-def read_config(filepath):
-    config = {}
+import typing
+
+def read_config(filepath: str) -> typing.Dict[str, typing.Any]:
+    config: typing.Dict[str, typing.Any] = {}
     with open(filepath, 'r') as file:
         for line in file:
             line = line.strip()
@@ -20,9 +22,11 @@ def read_config(filepath):
                 config[key] = (value == "True")
             else:
                 config[key] = value
+                
     req_keys = ["WIDTH", "HEIGHT", "ENTRY", "EXIT", "PERFECT"]
     for req in req_keys:
         if req not in config:
             print("Error: Missing key", req)
             exit(1)
+            
     return config
