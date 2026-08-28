@@ -104,27 +104,31 @@ class MazeSolver:
         for i in range(len(path) -1):
             x1, y1 = path[i]
             x2, y2 = path[i + 1]
-        
-        if x2 == x1 + 1:
-            directions.append("E")
-        elif x2 == x1 - 1:
-            directions.append("W")
-        elif y2 == y1 + 1:
-            directions.append("S")
-        elif y2 == y1 - 1:
-            directions.append("N")
-        else:
-            raise ValueError("Invalid path: cells are not adjacent")
+
+            if x2 == x1 + 1:
+                directions.append("E")
+            elif x2 == x1 - 1:
+                directions.append("W")
+            elif y2 == y1 + 1:
+                directions.append("S")
+            elif y2 == y1 - 1:
+                directions.append("N")
+            else:
+                raise ValueError("Invalid path: cells are not adjacent")
 
         return "".join(directions)
 
+    def reset(self) -> None:
+        """Reset the maze to its initial state."""
+        self._init_grid()
+
 if __name__ == "__main__":
-    gen = MazeGenerator(width=5, height=5)
-    solver = MazeSolver(gen)
+    maze = MazeGenerator(width=5, height=5)
+    solver = MazeSolver(maze)
 
     path = solver.path_solver((0, 0), (4, 4))
     print("Path found (expected None):", path)
 
     if path is not None:
-        directions = solver.path_to_directions(path)
+        directions = solver.path_directions(path)
         print("Directions:", directions)

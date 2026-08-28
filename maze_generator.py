@@ -38,8 +38,15 @@ class MazeGenerator:
         self.height: int = height
         self.seed = seed
         self.randomizer = random.Random(seed)
-        self.grid = [[15 for _ in range(width)] for _ in range(height)]
-        self.visited = [[False for _ in range(width)] for _ in range(height)]
+        self._init_grid()
+        
+    def _init_grid(self) -> None:
+        self.grid = [
+			[15 for _ in range(self.width)] for _ in range(self.height)
+		]
+        self.visited = [
+			[False for _ in range(self.width)] for _ in range(self.height)
+		]
 
     def get_cell(self, x: int, y: int) -> typing.Optional[int]:
         """Return the cell value or None if the coordinates are invalid."""
