@@ -6,7 +6,7 @@ from config_parser import read_config
 from maze_generator import MazeGenerator
 from maze_solver import MazeSolver
 from output import maze_hex, write_output
-from display import build_ascii_grid, print_maze
+from display import build_ascii_grid, print_maze, convert_to_box_drawing
 
 
 def main() -> None:
@@ -102,11 +102,28 @@ def main() -> None:
 
     # 6. visual ASCII
     try:
-        print("\n--- Maze Render ---")
-        ascii_grid = build_ascii_grid(
-            generator.grid, width, height, entry, exit_pos
+        gen = MazeGenerator(
+            width=config["WIDTH"],
+            height=config["HEIGHT"]
         )
-        print_maze(ascii_grid)
+
+        gen.generate_maze(config["ENTRY"])
+
+        print("\n##### Create MAZE #####\n")
+
+        asciirunner = build_ascii_grid(
+            gen.grid,
+            gen.width,
+            gen.height,
+            config["ENTRY"],
+            config["EXIT"]
+        )
+
+        mazerunner = convert_to_box_drawing(asciirunner)
+
+        print_maze(mazerunner)
+        print("\n")
+
     except Exception as e:
         sys.stderr.write(f"Error displaying maze: {e}\n")
 

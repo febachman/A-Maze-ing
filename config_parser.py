@@ -21,13 +21,14 @@ def read_config(filepath: str) -> typing.Dict[str, typing.Any]:
                 config[key] = (int(x), int(y))
             elif key == "PERFECT":
                 config[key] = (value == "True")
+            elif key == "SEED":
+                config[key] = int(value)
             else:
                 config[key] = value
 
     req_keys = ["WIDTH", "HEIGHT", "ENTRY", "EXIT", "PERFECT"]
     for req in req_keys:
         if req not in config:
-            print("Error: Missing key", req)
-            exit(1)
+            raise ValueError(f"Missing required key {req}")
 
     return config
