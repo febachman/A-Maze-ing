@@ -121,15 +121,3 @@ class MazeSolver:
     def reset(self) -> None:
         """Reset the maze to its initial state."""
         self.maze._init_grid()
-
-
-if __name__ == "__main__":
-    maze = MazeGenerator(width=5, height=5)
-    solver = MazeSolver(maze)
-
-    path = solver.path_solver((0, 0), (4, 4))
-    print("Path found (expected None):", path)
-
-    if path is not None:
-        directions = solver.path_directions(path)
-        print("Directions:", directions)

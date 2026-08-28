@@ -88,8 +88,33 @@ class MazeGenerator:
                 neighbors.append((direction, nx, ny))
         return neighbors
 
+    def _apply_42_mask(self) -> None:
+        """Marca a área do 42 como 'visitada' para isolá-la do algoritmo de busca."""
+        shape_42 = [
+            "X   XXX",
+            "X     X",
+            "XXX XXX",
+            "  X X  ",
+            "  X XXX"
+        ]
+        center_y: int = self.height // 2
+        center_x: int = self.width // 2
+        start_y: int = center_y - (len(shape_42) // 2)
+        start_x: int = center_x - (len(shape_42[0]) // 2)
+
+        for i, row in enumerate(shape_42):
+            for j, char in enumerate(row):
+                curr_y = start_y + i
+                curr_x = start_x + j
+                if 0 <= curr_y < self.height and 0 <= curr_x < self.width:
+                    if char == "X":
+                        self.visited[curr_y][curr_x] = True
+
     def generate_maze(self, start_cell: typing.Tuple[int, int]) -> None:
         """Generate a maze using iterative backtracking (Clean Version)."""
+
+        self._apply_42_mask()
+
         stack = [start_cell]
         self.visited[start_cell[1]][start_cell[0]] = True
 
@@ -109,15 +134,3 @@ class MazeGenerator:
         """Display the maze grid for debugging."""
         for row in self.grid:
             print(row)
-
-
-if __name__ == "__main__":
-    maze1 = MazeGenerator(width=5, height=5, seed=42)
-    maze2 = MazeGenerator(width=5, height=5, seed=123)
-    maze1.generate_maze((0, 0))
-    maze2.generate_maze((0, 0))
-    maze1.display_debug()
-    print("---------")
-    maze2.display_debug()
-    print("---------")
-    print(maze1.grid == maze2.grid)
