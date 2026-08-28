@@ -4,7 +4,7 @@ import typing
 
 
 def build_ascii_grid(
-    maze_grid: typing.List[typing.List[int]], 
+    maze_grid: typing.List[typing.List[int]],
     width: int,
     height: int,
     entry_coords: typing.Tuple[int, int],
@@ -27,16 +27,16 @@ def build_ascii_grid(
 
             expanded_grid[grid_y][grid_x] = " "
 
-            if not (cell_value & NORTH): 
+            if not (cell_value & NORTH):
                 expanded_grid[grid_y - 1][grid_x] = " "
 
-            if not (cell_value & EAST): 
+            if not (cell_value & EAST):
                 expanded_grid[grid_y][grid_x + 1] = " "
 
-            if not (cell_value & SOUTH): 
+            if not (cell_value & SOUTH):
                 expanded_grid[grid_y + 1][grid_x] = " "
 
-            if not (cell_value & WEST): 
+            if not (cell_value & WEST):
                 expanded_grid[grid_y][grid_x - 1] = " "
 
     shape_42 = [
@@ -54,7 +54,10 @@ def build_ascii_grid(
         for j, char in enumerate(row_shape):
             curr_y = start_y + i
             curr_x = start_x + j
-            if 0 < curr_y < len(expanded_grid) - 1 and 0 < curr_x < len(expanded_grid[0]) - 1:
+            if (
+                0 < curr_y < len(expanded_grid) - 1
+                and 0 < curr_x < len(expanded_grid[0]) - 1
+            ):
                 if char == "#":
                     expanded_grid[curr_y][curr_x] = "@"
                 elif char == " ":
@@ -103,6 +106,8 @@ if __name__ == "__main__":
     gen.generate_maze(config["ENTRY"])
 
     print("\n##### TESTE DE DISPLAY ASCII #####\n")
-    tela_ascii = build_ascii_grid(gen.grid, gen.width, gen.height, config["ENTRY"], config["EXIT"])
+    tela_ascii = build_ascii_grid(
+        gen.grid, gen.width, gen.height, config["ENTRY"], config["EXIT"]
+    )
     print_maze(tela_ascii)
     print("\n")

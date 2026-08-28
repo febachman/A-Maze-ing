@@ -39,14 +39,14 @@ class MazeGenerator:
         self.seed = seed
         self.randomizer = random.Random(seed)
         self._init_grid()
-        
+
     def _init_grid(self) -> None:
         self.grid = [
-			[15 for _ in range(self.width)] for _ in range(self.height)
-		]
+            [15 for _ in range(self.width)] for _ in range(self.height)
+        ]
         self.visited = [
-			[False for _ in range(self.width)] for _ in range(self.height)
-		]
+            [False for _ in range(self.width)] for _ in range(self.height)
+        ]
 
     def get_cell(self, x: int, y: int) -> typing.Optional[int]:
         """Return the cell value or None if the coordinates are invalid."""
@@ -74,7 +74,11 @@ class MazeGenerator:
 
         return True
 
-    def _get_unvisited_neighbors(self, x: int, y: int) -> typing.List[typing.Tuple[int, int, int]]:
+    def _get_unvisited_neighbors(
+        self,
+        x: int,
+        y: int
+    ) -> typing.List[typing.Tuple[int, int, int]]:
         """Return a list of valid, unvisited neighbors."""
         neighbors = []
         for direction, (dx, dy) in self.MOVEMENTS.items():

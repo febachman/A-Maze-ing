@@ -101,7 +101,7 @@ class MazeSolver:
         """Convert a coordinate path into N/E/S/W directions."""
         directions = []
 
-        for i in range(len(path) -1):
+        for i in range(len(path) - 1):
             x1, y1 = path[i]
             x2, y2 = path[i + 1]
 
@@ -120,7 +120,8 @@ class MazeSolver:
 
     def reset(self) -> None:
         """Reset the maze to its initial state."""
-        self._init_grid()
+        self.maze._init_grid()
+
 
 if __name__ == "__main__":
     maze = MazeGenerator(width=5, height=5)

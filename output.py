@@ -12,15 +12,18 @@ def cell_hex(cell: int) -> str:
         raise ValueError("Cell value must be between 0 and 15.")
     return format(cell, "X")
 
+
 def row_hex(row: typing.List[int]) -> str:
     """Convert one maze row to hexadecimal."""
     return "".join(cell_hex(cell) for cell in row)
+
 
 def maze_hex(
     grid: typing.List[typing.List[int]]
 ) -> typing.List[str]:
     """Convert the complete maze grid to hexadecimal rows."""
     return [row_hex(row) for row in grid]
+
 
 def write_output(
     filename: str,
