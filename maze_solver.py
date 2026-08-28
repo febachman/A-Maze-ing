@@ -36,7 +36,6 @@ class MazeSolver:
         for dx, dy, wall_bit, _ in directions:
             nx, ny = x + dx, y + dy
             if 0 <= nx < self.maze.width and 0 <= ny < self.maze.height:
-                # Se o bit da parede NAO estiver ativo, ha passagem livre
                 if not (cell_value & wall_bit):
                     neighbors.append((nx, ny, wall_bit))
 

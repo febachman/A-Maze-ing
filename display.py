@@ -8,7 +8,8 @@ def build_ascii_grid(
     width: int,
     height: int,
     entry_coords: typing.Tuple[int, int],
-    exit_coords: typing.Tuple[int, int]
+    exit_coords: typing.Tuple[int, int],
+    path: typing.Optional[typing.List[typing.Tuple[int, int]]] = None
 ) -> typing.List[typing.List[str]]:
     """Builds a maze with walls and empty spaces, highlighting 42 cells."""
     NORTH: int = 1
@@ -57,6 +58,27 @@ def build_ascii_grid(
                 expanded_grid[grid_y + 1][grid_x] = " "
             if not (cell_value & WEST):
                 expanded_grid[grid_y][grid_x - 1] = " "
+    if path:
+        for i in range(len(path) - 1):
+            x1, y1 = path[i]
+            x2, y2 = path[i + 1]
+
+            if (
+                expanded_grid[y1 * 2 + 1][x1 * 2 + 1]
+                not in ("E", "X", "@")
+            ):
+                expanded_grid[y1 * 2 + 1][x1 * 2 + 1] = "&"
+
+            mid_x, mid_y = x1 + x2 + 1, y1 + y2 + 1
+            if expanded_grid[mid_y][mid_x] not in ("E", "X", "@"):
+                expanded_grid[mid_y][mid_x] = "&"
+
+            x_last, y_last = path[-1]
+            if (
+                expanded_grid[y_last * 2 + 1][x_last * 2 + 1]
+                not in ("E", "X", "@")
+            ):
+                expanded_grid[y_last * 2 + 1][x_last * 2 + 1] = "&"
 
     ex, ey = entry_coords
     expanded_grid[ey * 2 + 1][ex * 2 + 1] = "E"
@@ -68,18 +90,25 @@ def build_ascii_grid(
 
 def print_maze(grid: typing.List[typing.List[str]]) -> None:
     """Prints the maze grid using Box-Drawing characters"""
-    WALL_COLOR: str = "\033[38;5;202m"
     SPECIAL_COLOR: str = "\033[38;5;135m"
     RESET_COLOR: str = "\033[0m"
 
     BOX_CHARS = set("■│─└┌├┘┴┐┤┬┼")
     CONNECTS_RIGHT = set("─└┌├┴┬┼")
-    for row in grid:
+
+    color_palette = [196, 202, 208, 214, 220, 118, 46, 51, 33, 21, 57, 135]
+
+    for y, row in enumerate(grid):
         rendered_row: str = ""
-        for char in row:
+        for x, char in enumerate(row):
+            color_index = (x + y) % len(color_palette)
+            WALL_COLOR = f"\033[38;5;{color_palette[color_index]}m"
+
             if char in BOX_CHARS:
                 padding = "─" if char in CONNECTS_RIGHT else " "
                 rendered_row += f"{WALL_COLOR}{char}{padding}{RESET_COLOR}"
+            elif char == "&":
+                rendered_row += f"\033[38;5;220m✷ {RESET_COLOR}"
             elif char == "@":
                 rendered_row += f"{SPECIAL_COLOR}🦄{RESET_COLOR}"
             elif char == " ":
@@ -87,7 +116,7 @@ def print_maze(grid: typing.List[typing.List[str]]) -> None:
             elif char == "E":
                 rendered_row += f"\033[38;5;46m🐍{RESET_COLOR}"
             elif char == "X":
-                rendered_row += f"\033[38;5;196m🏃{RESET_COLOR}"
+                rendered_row += f"\033[38;5;196m🌈{RESET_COLOR}"
             else:
                 rendered_row += str(char) + " "
         print(rendered_row)

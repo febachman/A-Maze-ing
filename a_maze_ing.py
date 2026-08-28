@@ -102,21 +102,17 @@ def main() -> None:
 
     # 6. visual ASCII
     try:
-        gen = MazeGenerator(
-            width=config["WIDTH"],
-            height=config["HEIGHT"]
-        )
-
-        gen.generate_maze(config["ENTRY"])
-
+        # Não crie um novo MazeGenerator aqui.
         print("\n##### Create MAZE #####\n")
 
+        # Use o generator original já instanciado no passo 3
         asciirunner = build_ascii_grid(
-            gen.grid,
-            gen.width,
-            gen.height,
+            generator.grid,
+            generator.width,
+            generator.height,
             config["ENTRY"],
-            config["EXIT"]
+            config["EXIT"],
+            path
         )
 
         mazerunner = convert_to_box_drawing(asciirunner)

@@ -12,9 +12,6 @@ class MazeGenerator:
     SOUTH: int = 4
     WEST: int = 8
 
-    # dicionário de opostos ~relação parede com parede
-    # ex se remover a parece north de uma célula
-    # precisa remover a parede south da célula de cima
     OPPOSITES = {
         NORTH: SOUTH,
         EAST: WEST,
@@ -22,8 +19,6 @@ class MazeGenerator:
         WEST: EAST,
     }
 
-    # dicionário de movimentos ~relação direção com coordenada
-    # para qual célula vou se seguir nessa direção
     MOVEMENTS = {
         NORTH: (0, -1),
         EAST: (1, 0),
