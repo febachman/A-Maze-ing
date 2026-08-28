@@ -35,20 +35,16 @@ def main() -> None:
     exit_raw = config.get("EXIT")
     output_file: str = config.get("OUTPUT_FILE", "maze.txt")
 
-    if not isinstance(entry_raw, tuple) or len(entry_raw) != 2:
+    try:
+        if entry_raw is None or exit_raw is None:
+            raise ValueError("Missing ENTRY or EXIT key")
+        entry: Tuple[int, int] = (int(entry_raw[0]), int(entry_raw[1]))
+        exit_pos: Tuple[int, int] = (int(exit_raw[0]), int(exit_raw[1]))
+    except (IndexError, TypeError, ValueError):
         sys.stderr.write(
-            "Error: ENTRY key is missing or invalid in configuration.\n"
+            "Error: ENTRY or EXIT coordinates are missing or invalid.\n"
         )
         sys.exit(1)
-
-    if not isinstance(exit_raw, tuple) or len(exit_raw) != 2:
-        sys.stderr.write(
-            "Error: EXIT key is missing or invalid in configuration.\n"
-        )
-        sys.exit(1)
-
-    entry: Tuple[int, int] = (int(entry_raw[0]), int(entry_raw[1]))
-    exit_pos: Tuple[int, int] = (int(exit_raw[0]), int(exit_raw[1]))
 
     # validation entry and exit
     if not (0 <= entry[0] < width and 0 <= entry[1] < height):
