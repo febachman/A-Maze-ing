@@ -4,13 +4,13 @@ import typing
 
 
 def build_ascii_grid(
-    maze_grid: typing.List[typing.List[int]], 
+    maze_grid: typing.List[typing.List[int]],
     width: int,
     height: int,
     entry_coords: typing.Tuple[int, int],
     exit_coords: typing.Tuple[int, int]
 ) -> typing.List[typing.List[str]]:
-    """Builds an maze with walls and empty spaces, highlighting the 42 cells."""
+    """Builds a maze with walls and empty spaces, highlighting 42 cells."""
     NORTH: int = 1
     EAST: int = 2
     SOUTH: int = 4
@@ -28,17 +28,18 @@ def build_ascii_grid(
     start_y = (height // 2) - (len(shape_42) // 2)
     start_x = (width // 2) - (len(shape_42[0]) // 2)
 
-    # 2. Constrói o grid baseando-se nas células matemáticas
+    # 2. build grid
     for y in range(height):
         for x in range(width):
             cell_value: int = maze_grid[y][x]
             grid_x: int = x * 2 + 1
             grid_y: int = y * 2 + 1
 
-            # Verifica se esta célula exata faz parte da máscara do 42
+            # verify if cell is part of 42
             is_42_cell = False
-            if start_y <= y < start_y + len(
-                shape_42) and start_x <= x < start_x + len(shape_42[0]
+            if (
+                start_y <= y < start_y + len(shape_42)
+                and start_x <= x < start_x + len(shape_42[0])
             ):
                 if shape_42[y - start_y][x - start_x] == "X":
                     is_42_cell = True

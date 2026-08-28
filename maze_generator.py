@@ -89,7 +89,7 @@ class MazeGenerator:
         return neighbors
 
     def _apply_42_mask(self) -> None:
-        """Marca a área do 42 como 'visitada' para isolá-la do algoritmo de busca."""
+        """Set 42 area as visited to isolate from algorithm"""
         shape_42 = [
             "X   XXX",
             "X     X",
@@ -111,7 +111,7 @@ class MazeGenerator:
                         self.visited[curr_y][curr_x] = True
 
     def generate_maze(self, start_cell: typing.Tuple[int, int]) -> None:
-        """Generate a maze using iterative backtracking (Clean Version)."""
+        """Generate a maze using iterative backtracking"""
 
         self._apply_42_mask()
 
@@ -131,6 +131,6 @@ class MazeGenerator:
                 stack.pop()
 
     def display_debug(self) -> None:
-        """Display the maze grid for debugging."""
+        """Display the maze grid for debugging"""
         for row in self.grid:
             print(row)
