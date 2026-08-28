@@ -71,43 +71,55 @@ def build_ascii_grid(
 
 
 def print_maze(grid: typing.List[typing.List[str]]) -> None:
-    """Prints the maze grid using solid blocks."""
+    """Prints the maze grid using Box-Drawing characters"""
     WALL_COLOR: str = "\033[38;5;33m"
     SPECIAL_COLOR: str = "\033[38;5;135m"
     RESET_COLOR: str = "\033[0m"
-    WALL_BLOCK: str = "██"
-    FLOOR_BLOCK: str = "  "
+
+    BOX_CHARS = set("■│─└┌├┘┴┐┤┬┼")
+    CONNECTS_RIGHT = set("─└┌├┴┬┼")
     for row in grid:
         rendered_row: str = ""
         for char in row:
-            if char == "#":
-                rendered_row += f"{WALL_COLOR}{WALL_BLOCK}{RESET_COLOR}"
+            if char in BOX_CHARS:
+                padding = "─" if char in CONNECTS_RIGHT else " "
+                rendered_row += f"{WALL_COLOR}{char}{padding}{RESET_COLOR}"
             elif char == "@":
-                rendered_row += f"{SPECIAL_COLOR}{WALL_BLOCK}{RESET_COLOR}"
+                rendered_row += f"{SPECIAL_COLOR}@@{RESET_COLOR}"
             elif char == " ":
-                rendered_row += FLOOR_BLOCK
+                rendered_row += "  "
             elif char == "E":
-                rendered_row += f"\033[38;5;46m E{RESET_COLOR}"
+                rendered_row += f"\033[38;5;46mE {RESET_COLOR}"
             elif char == "X":
-                rendered_row += f"\033[38;5;196m X{RESET_COLOR}"
+                rendered_row += f"\033[38;5;196mX {RESET_COLOR}"
             else:
-                rendered_row += f" {char}"
+                rendered_row += str(char) + " "
         print(rendered_row)
 
 
-# Main pra teste
-if __name__ == "__main__":
-    from maze_generator import MazeGenerator
-    from config_parser import read_config
-
-    config = read_config("config.txt")
-
-    gen = MazeGenerator(width=config["WIDTH"], height=config["HEIGHT"])
-    gen.generate_maze(config["ENTRY"])
-
-    print("\n##### TESTE DE DISPLAY ASCII #####\n")
-    tela_ascii = build_ascii_grid(
-        gen.grid, gen.width, gen.height, config["ENTRY"], config["EXIT"]
-    )
-    print_maze(tela_ascii)
-    print("\n")
+def convert_to_box_drawing(
+        grid: typing.List[typing.List[str]]
+) -> typing.List[typing.List[str]]:
+    BOX_CHARS_DICT = {
+        0: '■',  1: '│',  2: '─',  3: '└',
+        4: '│',  5: '│',  6: '┌',  7: '├',
+        8: '─',  9: '┘', 10: '─', 11: '┴',
+        12: '┐', 13: '┤', 14: '┬', 15: '┼'
+    }
+    height: int = len(grid)
+    width: int = len(grid[0])
+    ref_grid = [row[:] for row in grid]
+    for y in range(height):
+        for x in range(width):
+            if ref_grid[y][x] == "#":
+                mask: int = 0
+                if y > 0 and ref_grid[y-1][x] == "#":
+                    mask += 1
+                if x < width - 1 and ref_grid[y][x+1] == "#":
+                    mask += 2
+                if y < height - 1 and ref_grid[y+1][x] == "#":
+                    mask += 4
+                if x > 0 and ref_grid[y][x-1] == "#":
+                    mask += 8
+                grid[y][x] = BOX_CHARS_DICT[mask]
+    return grid
