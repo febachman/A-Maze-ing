@@ -1,0 +1,30 @@
+# Ambientes virtuais
+.venv/
+venv/
+env/
+ENV/
+
+# Byte-compiled / arquivos de cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribuições e pacotes
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
+
+# Arquivos de teste e cobertura (Coverage/Pytest)
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Configurações de IDEs e editores (opcional)
+.vscode/
+.idea/
+*.swp
