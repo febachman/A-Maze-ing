@@ -27,11 +27,16 @@ class MazeGenerator:
     }
 
     def __init__(
-        self, width: int, height: int, seed: typing.Optional[int] = None
+        self,
+        width: int,
+        height: int,
+        seed: typing.Optional[int] = None,
+        perfect: bool = False
     ) -> None:
         self.width: int = width
         self.height: int = height
-        self.seed = seed
+        self.seed: typing.Optional[int] = seed
+        self.perfect: bool = perfect
         self.randomizer = random.Random(seed)
         self._init_grid()
 

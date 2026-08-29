@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-from typing import Tuple
+from typing import Optional, Tuple
 from config_parser import read_config
 from maze_generator import MazeGenerator
 from maze_solver import MazeSolver
@@ -31,6 +31,8 @@ def main() -> None:
 
     width: int = config.get("WIDTH", 0)
     height: int = config.get("HEIGHT", 0)
+    perfect: bool = config.get("PERFECT", False)
+    seed: Optional[int] = config.get("SEED")
     entry_raw = config.get("ENTRY")
     exit_raw = config.get("EXIT")
     output_file: str = config.get("OUTPUT_FILE", "maze.txt")
@@ -69,7 +71,12 @@ def main() -> None:
 
     # 3. maze generator
     try:
-        generator = MazeGenerator(width=width, height=height)
+        generator = MazeGenerator(
+            width=width,
+            height=height,
+            seed=seed,
+            perfect=perfect
+        )
         generator.generate_maze(entry)
     except Exception as e:
         sys.stderr.write(f"Error generating maze: {e}\n")
