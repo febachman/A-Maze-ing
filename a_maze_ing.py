@@ -77,7 +77,7 @@ def main() -> None:
             seed=seed,
             perfect=perfect
         )
-        generator.generate_maze(entry)
+        generator.generate_maze(entry, exit_pos)
     except Exception as e:
         sys.stderr.write(f"Error generating maze: {e}\n")
         sys.exit(1)

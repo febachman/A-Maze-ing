@@ -53,7 +53,7 @@ if __name__ == "__main__":
             perfect=config.get("PERFECT", False)
         )
 
-        generator.generate_maze(config["ENTRY"])
+        generator.generate_maze(config["ENTRY"], config["EXIT"])
 
         solver = MazeSolver(generator)
 
