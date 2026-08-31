@@ -46,16 +46,16 @@ After the maze is generated and solved, it is displayed in the terminal and the 
 
 # Interactive Menu
 Once the maze is displayed, the program provides the following menu:
-1. Generate new maze: Generates another maze using the same dimensions, entry, exit, and generation mode (seed=None is used).
+1. Generate new maze: Generates another maze using the same dimensions, entry, exit, and generation mode (`seed=None` is used).
 2. Show/Hide path: Toggles the visualization of the shortest path between the entry and exit calculated using BFS.
 3. Change wall colors: Cycles through the available wall-color states used by the terminal display.
 4. Exit: Terminates the program.
 
-# Configuration File
-FormatThe program receives its configuration through a text file. The configuration determines the maze dimensions, entry and exit positions, output file, generation mode, and optional random seed.
+# Configuration File Format
+The program receives its configuration through a text file. The configuration determines the maze dimensions, entry and exit positions, output file, generation mode, and optional random seed.
 A configuration file contains the following parameters:
 
-Ini, TOML
+```ini
 WIDTH=20
 HEIGHT=15
 ENTRY=0,0
@@ -63,20 +63,38 @@ EXIT=19,14
 OUTPUT_FILE=maze.txt
 PERFECT=False
 SEED=42
+```
 
 # Configuration Parameters
-Table
-ParameterDescriptionWIDTHWidth of the maze in cells.HEIGHTHeight of the maze in cells.ENTRYCoordinates of the maze entry in x,y format.EXITCoordinates of the maze exit in x,y format.OUTPUT_FILEName of the file where the generated maze is exported.PERFECTSelects the maze generation mode (True for perfect, False for Pac-Man-like).SEEDOptional integer used to initialize the random number generator.
+| Parameter | Description |
+| :--- | :--- |
+| WIDTH | Width of the maze in cells. |
+| HEIGHT | Height of the maze in cells. |
+| ENTRY | Coordinates of the maze entry in `x,y` format. |
+| EXIT | Coordinates of the maze exit in `x,y` format. |
+| OUTPUT_FILE | Name of the file where the generated maze is exported. |
+| PERFECT | Selects generation mode (`True` for perfect, `False` for Pac-Man-like). |
+| SEED | Optional integer used to initialize the random number generator. |
 
 # Technical Choices & Algorithm Selection
 ## Maze Generation Algorithm
 - Chosen Algorithm: DFS with Iterative Backtracking
 - Reason for Choice: DFS naturally produces a connected path structure while remaining simple to implement without relying on Python's recursive call stack. Graph-theoretically, a perfect maze maps directly to a spanning tree where there is exactly one path between any two vertices
-- Randomized DFS: Combining DFS with self.randomizer.choice(neighbors) introduces randomness to select unvisited neighbors, producing diverse layouts while maintaining connectivity.
+- Randomized DFS: Combining DFS with `self.randomizer.choice(neighbors)` introduces randomness to select unvisited neighbors, producing diverse layouts while maintaining connectivity.
 
 ## Maze Solver Algorithm
 - Chosen Algorithm: Breadth-First Search (BFS).
 - Reason for Choice: In an unweighted grid where every step shares an identical cost, BFS guarantees that the first time the destination is reached, the path found contains the absolute minimum number of moves.
+
+## Maze Representation (Bitwise Values)
+Internally, each maze cell is represented by a four-bit value where each bit corresponds to a wall:
+
+| Direction | Bitwise Operation |
+| :--- | :--- |
+| North | 1 |
+| East | 2 |
+| South | 4 |
+| West | 8 |
 
 ## Reusable Maze Generator Module
 ### Module Overview
@@ -87,25 +105,25 @@ The MazeGenerator class is designed as a reusable component independent of the t
 - Managing perfect maze generation, loop insertion, and dead-end reduction.
 
 ### Main Methods
-- get_cell(x, y): Returns the value of a cell or None when coordinates are outside the maze
-- remove_wall(x, y, direction): Removes a wall between a cell and its valid neighbor and updates both cells.
-- _gen_perfect_maze(start_cell): Generates the maze using randomized DFS with iterative backtracking
-- _add_loops(): Adds loops to the non-perfect mode while checking the 3x3 constraint.
-- _reduce_dead_ends(): Attempts to reduce the number of dead ends while preserving maze validity
-- is_masked(x, y): Checks whether a cell belongs to the 42 pattern.
-- generate_maze(start_cell, exit_cell): Coordinates the generation process according to the selected PERFECT mode.
+- **`get_cell(x, y):`** Returns the value of a cell or None when coordinates are outside the maze
+- **`remove_wall(x, y, direction):`** Removes a wall between a cell and its valid neighbor and updates both cells.
+- **`_gen_perfect_maze(start_cell):`** Generates the maze using randomized DFS with iterative backtracking
+- **`_add_loops():`** Adds loops to the non-perfect mode while checking the 3x3 constraint.
+- **`_reduce_dead_ends():`** Attempts to reduce the number of dead ends while preserving maze validity
+- **`is_masked(x, y):`** Checks whether a cell belongs to the 42 pattern.
+- **`generate_maze(start_cell, exit_cell):`** Coordinates the generation process according to the selected `PERFECT` mode.
 
 # Team and Project Management
 ## Team Roles & Division of Responsibilities
 Developed collaboratively by a two-member team.
 - Team Member 1: Mainly responsible for the configuration parser, terminal display, and box-drawing visualization.
-- Team Member 2: Mainly responsible for the BFS and DFS algorithms, maze generation (PERFECT=True and PERFECT=False modes), solver, and output generation
+- Team Member 2: Mainly responsible for the BFS and DFS algorithms, maze generation (`PERFECT=True` and `PERFECT=False` modes), solver, and output generation
 - Joint Responsibilities: Consolidation and integration in a_maze_ing.py, architecture discussions, testing, and debugging.
 
 ## Anticipated Planning & Evolution
 The project was implemented incrementally:
 1. Configuration Parser: Establish the format and validation of the configuration file.
-2. Maze Matrix Structure: Build the internal representation of the maze (PERFECT=True).
+2. Maze Matrix Structure: Build the internal representation of the maze (`PERFECT=True`).
 3. Maze Solver: Implement BFS and establish pathfinding between entry and exit.
 4. Output: Convert the internal maze representation to hexadecimal and generate the output file
 5. Display: Add the terminal visualization of the generated maze, path, and wall colors.
@@ -120,7 +138,7 @@ The project was implemented incrementally:
 - Terminal: Running the application, testing configurations, and debugging behavior.
 - Visual Studio Code: Writing, organizing, and reviewing the source code.
 - GitHub: Version control, collaboration, and project management.
-- Python 3: Implementation language (random, typing, collections.deque, sys, os).
+- Python 3: Implementation language (random, typing, dictionaries, sys).
 
 # Resources & AI Usage
 ## External References
