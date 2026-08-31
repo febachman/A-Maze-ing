@@ -116,7 +116,7 @@ def main() -> None:
         while True:
             os.system('clear' if os.name == 'posix' else 'cls')
             print("\n##### MAZE #####\n")
-            
+
             asciirunner = build_ascii_grid(
                 generator.grid, generator.width, generator.height,
                 config["ENTRY"], config["EXIT"], path if show_path else None
@@ -132,7 +132,9 @@ def main() -> None:
             choice = input("\nOpção (1-4): ").strip()
 
             if choice == '1':
-                generator = MazeGenerator(width=width, height=height, seed=None, perfect=perfect)
+                generator = MazeGenerator(
+                    width=width, height=height, seed=None, perfect=perfect
+                )
                 generator.generate_maze(entry, exit_pos)
                 solver = MazeSolver(generator)
                 path = solver.path_solver(entry, exit_pos)
@@ -145,6 +147,6 @@ def main() -> None:
     except Exception as e:
         sys.stderr.write(f"Error displaying maze: {e}\n")
 
+
 if __name__ == "__main__":
     main()
-

@@ -87,7 +87,9 @@ def build_ascii_grid(
     return expanded_grid
 
 
-def print_maze(grid: typing.List[typing.List[str]], color_state: int = 0) -> None:
+def print_maze(
+        grid: typing.List[typing.List[str]], color_state: int = 0
+) -> None:
     """Prints the maze grid using Box-Drawing characters"""
     SPECIAL_COLOR: str = "\033[38;5;135m"
     RESET_COLOR: str = "\033[0m"
@@ -104,7 +106,7 @@ def print_maze(grid: typing.List[typing.List[str]], color_state: int = 0) -> Non
                 color_index = (x + y) % len(color_palette)
             else:
                 color_index = current_state - 1
-                
+
             WALL_COLOR = f"\033[38;5;{color_palette[color_index]}m"
 
             if char in BOX_CHARS:

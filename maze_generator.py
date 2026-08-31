@@ -129,7 +129,7 @@ class MazeGenerator:
             return False
         return self.masked[y][x]
 
-    def _generate_perfect_maze(self, start_cell: typing.Tuple[int, int]) -> None:
+    def _gen_perfect_maze(self, start_cell: typing.Tuple[int, int]) -> None:
         """Generate a perfect maze using iterative backtracking"""
         stack = [start_cell]
         self.visited[start_cell[1]][start_cell[0]] = True
@@ -326,7 +326,7 @@ class MazeGenerator:
         if self.is_masked(e_x, e_y):
             raise ValueError("Exit cannot be inside the 42 pattern.")
 
-        self._generate_perfect_maze(start_cell)
+        self._gen_perfect_maze(start_cell)
 
         if not self.perfect:
             self._add_loops()
