@@ -20,6 +20,8 @@ def read_config(filepath: str) -> typing.Dict[str, typing.Any]:
                 x, y = value.split(",")
                 config[key] = (int(x), int(y))
             elif key == "PERFECT":
+                if value not in ("True", "False"):
+                    raise ValueError("PERFECT must be either True or False.")
                 config[key] = (value == "True")
             elif key == "SEED":
                 config[key] = int(value)

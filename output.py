@@ -48,10 +48,12 @@ if __name__ == "__main__":
 
         generator = MazeGenerator(
             width=config["WIDTH"],
-            height=config["HEIGHT"]
+            height=config["HEIGHT"],
+            seed=config.get("SEED"),
+            perfect=config.get("PERFECT", False)
         )
 
-        generator.generate_maze(config["ENTRY"])
+        generator.generate_maze(config["ENTRY"], config["EXIT"])
 
         solver = MazeSolver(generator)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-from typing import Tuple
+from typing import Optional, Tuple
 from config_parser import read_config
 from maze_generator import MazeGenerator
 from maze_solver import MazeSolver
@@ -31,6 +31,8 @@ def main() -> None:
 
     width: int = config.get("WIDTH", 0)
     height: int = config.get("HEIGHT", 0)
+    perfect: bool = config.get("PERFECT", False)
+    seed: Optional[int] = config.get("SEED")
     entry_raw = config.get("ENTRY")
     exit_raw = config.get("EXIT")
     output_file: str = config.get("OUTPUT_FILE", "maze.txt")
@@ -69,8 +71,13 @@ def main() -> None:
 
     # 3. maze generator
     try:
-        generator = MazeGenerator(width=width, height=height)
-        generator.generate_maze(entry)
+        generator = MazeGenerator(
+            width=width,
+            height=height,
+            seed=seed,
+            perfect=perfect
+        )
+        generator.generate_maze(entry, exit_pos)
     except Exception as e:
         sys.stderr.write(f"Error generating maze: {e}\n")
         sys.exit(1)
@@ -102,27 +109,42 @@ def main() -> None:
 
     # 6. visual ASCII
     try:
-        # Não crie um novo MazeGenerator aqui.
-        print("\n##### Create MAZE #####\n")
+        color_state = 0
+        show_path = True
+        import os
 
-        # Use o generator original já instanciado no passo 3
-        asciirunner = build_ascii_grid(
-            generator.grid,
-            generator.width,
-            generator.height,
-            config["ENTRY"],
-            config["EXIT"],
-            path
-        )
+        while True:
+            os.system('clear' if os.name == 'posix' else 'cls')
+            print("\n##### MAZE #####\n")
+            
+            asciirunner = build_ascii_grid(
+                generator.grid, generator.width, generator.height,
+                config["ENTRY"], config["EXIT"], path if show_path else None
+            )
+            mazerunner = convert_to_box_drawing(asciirunner)
+            print_maze(mazerunner, color_state)
 
-        mazerunner = convert_to_box_drawing(asciirunner)
+            print("\nMenu:")
+            print("1 - Gerar novo labirinto")
+            print("2 - Mostrar/Ocultar Caminho")
+            print("3 - Trocar Cores das Paredes")
+            print("4 - Sair")
+            choice = input("\nOpção (1-4): ").strip()
 
-        print_maze(mazerunner)
-        print("\n")
-
+            if choice == '1':
+                generator = MazeGenerator(width=width, height=height, seed=None, perfect=perfect)
+                generator.generate_maze(entry, exit_pos)
+                solver = MazeSolver(generator)
+                path = solver.path_solver(entry, exit_pos)
+            elif choice == '2':
+                show_path = not show_path
+            elif choice == '3':
+                color_state += 1
+            elif choice == '4':
+                break
     except Exception as e:
         sys.stderr.write(f"Error displaying maze: {e}\n")
 
-
 if __name__ == "__main__":
     main()
+

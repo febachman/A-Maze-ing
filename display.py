@@ -36,7 +36,6 @@ def build_ascii_grid(
             grid_x: int = x * 2 + 1
             grid_y: int = y * 2 + 1
 
-            # verify if cell is part of 42
             is_42_cell = False
             if (
                 start_y <= y < start_y + len(shape_42)
@@ -88,20 +87,24 @@ def build_ascii_grid(
     return expanded_grid
 
 
-def print_maze(grid: typing.List[typing.List[str]]) -> None:
+def print_maze(grid: typing.List[typing.List[str]], color_state: int = 0) -> None:
     """Prints the maze grid using Box-Drawing characters"""
     SPECIAL_COLOR: str = "\033[38;5;135m"
     RESET_COLOR: str = "\033[0m"
-
     BOX_CHARS = set("■│─└┌├┘┴┐┤┬┼")
     CONNECTS_RIGHT = set("─└┌├┴┬┼")
-
-    color_palette = [196, 202, 208, 214, 220, 118, 46, 51, 33, 21, 57, 135]
+    color_palette = [196, 202, 214, 220, 118, 46, 51, 33, 21, 57, 135]
+    num_states = len(color_palette) + 1
+    current_state = color_state % num_states
 
     for y, row in enumerate(grid):
         rendered_row: str = ""
         for x, char in enumerate(row):
-            color_index = (x + y) % len(color_palette)
+            if current_state == 0:
+                color_index = (x + y) % len(color_palette)
+            else:
+                color_index = current_state - 1
+                
             WALL_COLOR = f"\033[38;5;{color_palette[color_index]}m"
 
             if char in BOX_CHARS:
