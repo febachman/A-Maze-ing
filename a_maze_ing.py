@@ -109,27 +109,42 @@ def main() -> None:
 
     # 6. visual ASCII
     try:
-        # Não crie um novo MazeGenerator aqui.
-        print("\n##### Create MAZE #####\n")
+        color_state = 0
+        show_path = True
+        import os
 
-        # Use o generator original já instanciado no passo 3
-        asciirunner = build_ascii_grid(
-            generator.grid,
-            generator.width,
-            generator.height,
-            config["ENTRY"],
-            config["EXIT"],
-            path
-        )
+        while True:
+            os.system('clear' if os.name == 'posix' else 'cls')
+            print("\n##### MAZE #####\n")
+            
+            asciirunner = build_ascii_grid(
+                generator.grid, generator.width, generator.height,
+                config["ENTRY"], config["EXIT"], path if show_path else None
+            )
+            mazerunner = convert_to_box_drawing(asciirunner)
+            print_maze(mazerunner, color_state)
 
-        mazerunner = convert_to_box_drawing(asciirunner)
+            print("\nMenu:")
+            print("1 - Gerar novo labirinto")
+            print("2 - Mostrar/Ocultar Caminho")
+            print("3 - Trocar Cores das Paredes")
+            print("4 - Sair")
+            choice = input("\nOpção (1-4): ").strip()
 
-        print_maze(mazerunner)
-        print("\n")
-
+            if choice == '1':
+                generator = MazeGenerator(width=width, height=height, seed=None, perfect=perfect)
+                generator.generate_maze(entry, exit_pos)
+                solver = MazeSolver(generator)
+                path = solver.path_solver(entry, exit_pos)
+            elif choice == '2':
+                show_path = not show_path
+            elif choice == '3':
+                color_state += 1
+            elif choice == '4':
+                break
     except Exception as e:
         sys.stderr.write(f"Error displaying maze: {e}\n")
 
-
 if __name__ == "__main__":
     main()
+
