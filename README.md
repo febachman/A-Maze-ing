@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by fbachman & made-luc*
+*This project has been created as part of the 42 curriculum by fbachman, made-luc*
 
 # A-Maze-ing
 

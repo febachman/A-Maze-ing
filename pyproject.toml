@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mazegen"
+version = "1.0.0"
+description = "Reusable maze generator developed for the 42 A-Maze-ing project"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE.md" }
+
+authors = [
+    { name = "fbachman" },
+    { name = "made-luc" }
+]
+
+dependencies = []
+
+[tool.setuptools]
+py-modules = [
+    "maze_generator",
+    "maze_solver"
+]
