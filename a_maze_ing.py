@@ -125,11 +125,11 @@ def main() -> None:
             print_maze(mazerunner, color_state)
 
             print("\nMenu:")
-            print("1 - Gerar novo labirinto")
-            print("2 - Mostrar/Ocultar Caminho")
-            print("3 - Trocar Cores das Paredes")
-            print("4 - Sair")
-            choice = input("\nOpção (1-4): ").strip()
+            print("1 - Generate new maze")
+            print("2 - Show/Hide path")
+            print("3 - Change wall colors")
+            print("4 - Exit")
+            choice = input("\nOption (1-4): ").strip()
 
             if choice == '1':
                 generator = MazeGenerator(

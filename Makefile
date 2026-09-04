@@ -19,7 +19,7 @@ MYPY_FLAGS = \
 	--check-untyped-defs
 
 
-all: lint
+all: lint package-check
 
 
 install:
