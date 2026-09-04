@@ -3,12 +3,15 @@
 venv/
 env/
 ENV/
+buildenv/
+testenv/
 
 # Python and Pytest Caches
 __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
+.mypy_cache/
 
 # Distribution / Packaging
 build/

@@ -10,6 +10,7 @@ from display import build_ascii_grid, print_maze, convert_to_box_drawing
 
 
 def main() -> None:
+    """Run the A-Maze-ing application."""
     # 1. arg validation
     if len(sys.argv) != 2:
         sys.stderr.write("Usage: python3 a_maze_ing.py <config.txt>\n")
@@ -35,7 +36,7 @@ def main() -> None:
     seed: Optional[int] = config.get("SEED")
     entry_raw = config.get("ENTRY")
     exit_raw = config.get("EXIT")
-    output_file: str = config.get("OUTPUT_FILE", "maze.txt")
+    output_file: str = config["OUTPUT_FILE"]
 
     try:
         if entry_raw is None or exit_raw is None:
@@ -115,7 +116,6 @@ def main() -> None:
 
         while True:
             os.system('clear' if os.name == 'posix' else 'cls')
-            print("\n##### MAZE #####\n")
 
             asciirunner = build_ascii_grid(
                 generator.grid, generator.width, generator.height,
@@ -125,19 +125,32 @@ def main() -> None:
             print_maze(mazerunner, color_state)
 
             print("\nMenu:")
-            print("1 - Gerar novo labirinto")
-            print("2 - Mostrar/Ocultar Caminho")
-            print("3 - Trocar Cores das Paredes")
-            print("4 - Sair")
-            choice = input("\nOpção (1-4): ").strip()
+            print("1 - Generate new maze")
+            print("2 - Show/Hide path")
+            print("3 - Change wall colors")
+            print("4 - Exit")
+            choice = input("\nOption (1-4): ").strip()
 
             if choice == '1':
                 generator = MazeGenerator(
                     width=width, height=height, seed=None, perfect=perfect
                 )
                 generator.generate_maze(entry, exit_pos)
+
                 solver = MazeSolver(generator)
                 path = solver.path_solver(entry, exit_pos)
+
+                if path is not None:
+                    directions = solver.path_directions(path)
+                    hex_grid = maze_hex(generator.grid)
+
+                    write_output(
+                        output_file,
+                        hex_grid,
+                        entry,
+                        exit_pos,
+                        directions
+                    )
             elif choice == '2':
                 show_path = not show_path
             elif choice == '3':

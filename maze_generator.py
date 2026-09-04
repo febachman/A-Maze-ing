@@ -100,8 +100,45 @@ class MazeGenerator:
                 neighbors.append((direction, nx, ny))
         return neighbors
 
+    def _mask_keeps_maze_connected(
+        self,
+        mask_cells: typing.Set[typing.Tuple[int, int]]
+    ) -> bool:
+        """Check if maze cells remain connected with the 42 mask applied."""
+        available_cells: typing.Set[typing.Tuple[int, int]] = set()
+
+        for y in range(self.height):
+            for x in range(self.width):
+                if (x, y) not in mask_cells:
+                    available_cells.add((x, y))
+
+        if not available_cells:
+            return False
+
+        start = next(iter(available_cells))
+
+        stack: typing.List[typing.Tuple[int, int]] = [start]
+        visited: typing.Set[typing.Tuple[int, int]] = {start}
+
+        while stack:
+            x, y = stack.pop()
+
+            for dx, dy in self.MOVEMENTS.values():
+                nx = x + dx
+                ny = y + dy
+                neighbor = (nx, ny)
+
+                if (
+                    neighbor in available_cells
+                    and neighbor not in visited
+                ):
+                    visited.add(neighbor)
+                    stack.append(neighbor)
+
+        return len(visited) == len(available_cells)
+
     def _apply_42_mask(self) -> None:
-        """Set 42 area as visited to isolate from algorithm"""
+        """Apply the 42 pattern only when it preserves maze connectivity."""
         shape_42 = [
             "X   XXX",
             "X     X",
@@ -109,19 +146,41 @@ class MazeGenerator:
             "  X X  ",
             "  X XXX"
         ]
+
+        pattern_height: int = len(shape_42)
+        pattern_width: int = len(shape_42[0])
+
+        if self.width < pattern_width or self.height < pattern_height:
+            print(
+                "Warning: maze is too small to display the 42 pattern."
+            )
+            return
+
         center_y: int = self.height // 2
         center_x: int = self.width // 2
-        start_y: int = center_y - (len(shape_42) // 2)
-        start_x: int = center_x - (len(shape_42[0]) // 2)
+
+        start_y: int = center_y - (pattern_height // 2)
+        start_x: int = center_x - (pattern_width // 2)
+
+        mask_cells: typing.Set[typing.Tuple[int, int]] = set()
 
         for i, row in enumerate(shape_42):
             for j, char in enumerate(row):
-                curr_y = start_y + i
-                curr_x = start_x + j
-                if 0 <= curr_y < self.height and 0 <= curr_x < self.width:
-                    if char == "X":
-                        self.visited[curr_y][curr_x] = True
-                        self.masked[curr_y][curr_x] = True
+                if char == "X":
+                    curr_y: int = start_y + i
+                    curr_x: int = start_x + j
+                    mask_cells.add((curr_x, curr_y))
+
+        if not self._mask_keeps_maze_connected(mask_cells):
+            print(
+                "Warning: maze is too small to keep the 42 pattern "
+                "without disconnecting corridors."
+            )
+            return
+
+        for x, y in mask_cells:
+            self.visited[y][x] = True
+            self.masked[y][x] = True
 
     def is_masked(self, x: int, y: int) -> bool:
         """Return True if the cell belongs to the 42 pattern."""
