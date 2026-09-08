@@ -33,6 +33,9 @@ class MazeGenerator:
         seed: typing.Optional[int] = None,
         perfect: bool = False
     ) -> None:
+        """Initialize the maze generator."""
+        if width <= 0 or height <= 0:
+            raise ValueError("Width and height must be positive.")
         self.width: int = width
         self.height: int = height
         self.seed: typing.Optional[int] = seed
@@ -41,6 +44,7 @@ class MazeGenerator:
         self._init_grid()
 
     def _init_grid(self) -> None:
+        """Initialize maze cells and generation state."""
         self.grid = [
             [15 for _ in range(self.width)] for _ in range(self.height)
         ]
@@ -314,6 +318,11 @@ class MazeGenerator:
 
             loops_added += 1
 
+        if loops_added < target_loops:
+            raise ValueError(
+                "Maze too small to create at least two independent routes."
+            )
+
     def _possible_dead_end(
         self, x: int, y: int
     ) -> typing.List[typing.Tuple[int, int, int]]:
@@ -379,6 +388,14 @@ class MazeGenerator:
         s_x, s_y = start_cell
         e_x, e_y = exit_cell
 
+        if not (0 <= s_x < self.width and 0 <= s_y < self.height):
+            raise ValueError("Entry is outside maze bounds.")
+
+        if not (0 <= e_x < self.width and 0 <= e_y < self.height):
+            raise ValueError("Exit is outside maze bounds.")
+
+        if start_cell == exit_cell:
+            raise ValueError("Entry and exit must be different.")
         if self.is_masked(s_x, s_y):
             raise ValueError("Entry cannot be inside the 42 pattern.")
 

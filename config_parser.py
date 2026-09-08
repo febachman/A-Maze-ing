@@ -15,6 +15,8 @@ def read_config(filepath: str) -> typing.Dict[str, typing.Any]:
                 continue
 
             key, value = line.split("=", 1)
+            key = key.strip().upper()
+            value = value.strip()
 
             if key == "WIDTH":
                 config[key] = int(value)

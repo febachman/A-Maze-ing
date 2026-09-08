@@ -1,0 +1,11 @@
+[flake8]
+exclude =
+    .git,
+    .venv,
+    buildenv,
+    testenv,
+    __pycache__,
+    .mypy_cache,
+    build,
+    dist,
+    *.egg-info

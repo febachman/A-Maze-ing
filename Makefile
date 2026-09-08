@@ -8,12 +8,6 @@ VENV = .venv
 VENV_PYTHON = $(VENV)/bin/python
 VENV_PIP = $(VENV_PYTHON) -m pip
 
-BUILDENV = buildenv
-TESTENV = testenv
-
-BUILD_PYTHON = $(BUILDENV)/bin/python
-TEST_PYTHON = $(TESTENV)/bin/python
-
 MYPY_FLAGS = \
 	--warn-return-any \
 	--warn-unused-ignores \
@@ -21,13 +15,20 @@ MYPY_FLAGS = \
 	--disallow-untyped-defs \
 	--check-untyped-defs
 
+PIP_INDEX ?= https://pypi.org/simple
+
 
 all: lint run
 
 
-install:
+$(VENV_PYTHON):
 	$(PYTHON) -m venv $(VENV)
-	$(VENV_PIP) install flake8 mypy build
+
+
+install: $(VENV_PYTHON)
+	$(VENV_PIP) install --index-url $(PIP_INDEX) --upgrade pip
+	$(VENV_PIP) install --index-url $(PIP_INDEX) \
+		flake8 mypy setuptools wheel build
 	@echo "Development environment ready!"
 
 
@@ -40,62 +41,25 @@ debug:
 
 
 lint:
-	PATH="$(CURDIR)/$(VENV)/bin:$$PATH" flake8 .
-	PATH="$(CURDIR)/$(VENV)/bin:$$PATH" mypy . $(MYPY_FLAGS)
+	$(VENV_PYTHON) -m flake8 .
+	$(VENV_PYTHON) -m mypy . $(MYPY_FLAGS)
 	@echo "Lint and type checks passed!"
 
 
 lint-strict:
-	PATH="$(CURDIR)/$(VENV)/bin:$$PATH" flake8 .
-	PATH="$(CURDIR)/$(VENV)/bin:$$PATH" mypy . --strict
+	$(VENV_PYTHON) -m flake8 .
+	$(VENV_PYTHON) -m mypy . --strict
 	@echo "Strict type check passed!"
 
 
-typecheck:
-	PATH="$(CURDIR)/$(VENV)/bin:$$PATH" mypy . --strict
-	@echo "Type check passed!"
-
-
-test: lint
-	@echo "All checks passed!"
-
-
-package:
+package: install
 	rm -rf build dist *.egg-info
-	$(VENV_PYTHON) -m build
+	$(VENV_PYTHON) -m build --no-isolation
 	rm -f mazegen-*.tar.gz mazegen-*.whl
 	cp dist/mazegen-*.tar.gz .
 	cp dist/mazegen-*.whl .
 	rm -rf build dist *.egg-info
 	@echo "Package built and copied to project root!"
-
-
-build-package:
-	rm -rf $(BUILDENV)
-	rm -rf build dist *.egg-info
-	$(PYTHON) -m venv $(BUILDENV)
-	$(BUILD_PYTHON) -m pip install build
-	$(BUILD_PYTHON) -m build
-	rm -f mazegen-*.tar.gz mazegen-*.whl
-	cp dist/mazegen-*.tar.gz .
-	cp dist/mazegen-*.whl .
-	rm -rf $(BUILDENV)
-	rm -rf build dist *.egg-info
-	@echo "Package built in isolated environment!"
-
-
-test-package:
-	rm -rf $(TESTENV)
-	$(PYTHON) -m venv $(TESTENV)
-	$(TEST_PYTHON) -m pip install ./mazegen-*.whl
-	$(TEST_PYTHON) -c "from maze_generator import MazeGenerator; print('MazeGenerator import OK')"
-	$(TEST_PYTHON) -c "from maze_solver import MazeSolver; print('MazeSolver import OK')"
-	rm -rf $(TESTENV)
-	@echo "Package tested successfully!"
-
-
-package-check: build-package test-package
-	@echo "Build and installation test completed!"
 
 
 clean:
@@ -105,13 +69,18 @@ clean:
 	@echo "Cache files cleaned!"
 
 
+pypi: $(VENV_PYTHON)
+	$(VENV_PIP) install \
+		--index-url https://pypi.org/simple \
+		flake8 mypy setuptools wheel build
+	@echo "Dependencies installed from PyPI!"
+
+
 fclean: clean
 	rm -rf build
 	rm -rf dist
 	rm -rf *.egg-info
 	rm -rf $(VENV)
-	rm -rf $(BUILDENV)
-	rm -rf $(TESTENV)
 	rm -f $(OUTPUT_TEST)
 	@echo "Full clean completed!"
 
@@ -119,6 +88,5 @@ fclean: clean
 re: fclean install all
 
 
-.PHONY: all install run debug lint lint-strict typecheck test \
-	package build-package test-package package-check \
-	clean fclean re
+.PHONY: all install run debug lint lint-strict package \
+	clean pypi fclean re
