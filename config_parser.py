@@ -41,4 +41,9 @@ def read_config(filepath: str) -> typing.Dict[str, typing.Any]:
         if req not in config:
             raise ValueError(f"Missing required key {req}")
 
+    if config["WIDTH"] <= 0 or config["HEIGHT"] <= 0:
+        raise ValueError(
+            "WIDTH and HEIGHT must be positive integers."
+        )
+
     return config
