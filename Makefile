@@ -1,15 +1,12 @@
 PYTHON = python3
-PIP = $(PYTHON) -m pip
 
 MAIN = a_maze_ing.py
 CONFIG = config.txt
 OUTPUT_TEST = maze.txt
 
-BUILDENV = buildenv
-TESTENV = testenv
-
-BUILD_PYTHON = $(BUILDENV)/bin/python
-TEST_PYTHON = $(TESTENV)/bin/python
+VENV = .venv
+VENV_PYTHON = $(VENV)/bin/python
+VENV_PIP = $(VENV_PYTHON) -m pip
 
 MYPY_FLAGS = \
 	--warn-return-any \
@@ -18,12 +15,21 @@ MYPY_FLAGS = \
 	--disallow-untyped-defs \
 	--check-untyped-defs
 
+PIP_INDEX ?= https://pypi.org/simple
 
-all: lint package-check
+
+all: lint run
 
 
-install:
-	$(PIP) install flake8 mypy build
+$(VENV_PYTHON):
+	$(PYTHON) -m venv $(VENV)
+
+
+install: $(VENV_PYTHON)
+	$(VENV_PIP) install --index-url $(PIP_INDEX) --upgrade pip
+	$(VENV_PIP) install --index-url $(PIP_INDEX) \
+		flake8 mypy setuptools wheel build
+	@echo "Development environment ready! ✅"
 
 
 run:
@@ -35,85 +41,61 @@ debug:
 
 
 lint:
-	flake8 .
-	mypy . $(MYPY_FLAGS)
-	@echo "Lint and type checks passed! ✨"
+	$(VENV_PYTHON) -m flake8 .
+	$(VENV_PYTHON) -m mypy . $(MYPY_FLAGS)
+	@echo "Lint and type checks passed! ✅"
 
 
 lint-strict:
-	flake8 .
-	mypy . --strict
-	@echo "Strict type check passed! 🛡️"
+	$(VENV_PYTHON) -m flake8 .
+	$(VENV_PYTHON) -m mypy . --strict
+	@echo "Strict type check passed! ✅"
 
 
-typecheck:
-	mypy . --strict
-	@echo "Type check passed! 🛡️"
-
-
-test: lint
-	@echo "All checks passed! ✅"
-
-
-package:
+package: install
 	rm -rf build dist *.egg-info
+	$(VENV_PYTHON) -m build --no-isolation
 	rm -f mazegen-*.tar.gz mazegen-*.whl
-	$(PYTHON) -m build
 	cp dist/mazegen-*.tar.gz .
 	cp dist/mazegen-*.whl .
 	rm -rf build dist *.egg-info
-	@echo "Package built and copied to project root! 📦"
-
-
-build-package:
-	rm -rf $(BUILDENV)
-	rm -rf build dist *.egg-info
-	rm -f mazegen-*.tar.gz mazegen-*.whl
-	$(PYTHON) -m venv $(BUILDENV)
-	$(BUILD_PYTHON) -m pip install --upgrade pip
-	$(BUILD_PYTHON) -m pip install build
-	$(BUILD_PYTHON) -m build
-	cp dist/mazegen-*.tar.gz .
-	cp dist/mazegen-*.whl .
-	rm -rf $(BUILDENV)
-	rm -rf build dist *.egg-info
-	@echo "Package built in isolated environment! 📦"
-
-
-test-package:
-	rm -rf $(TESTENV)
-	$(PYTHON) -m venv $(TESTENV)
-	$(TEST_PYTHON) -m pip install ./mazegen-*.whl
-	$(TEST_PYTHON) -c "from maze_generator import MazeGenerator; print('MazeGenerator import OK ✅')"
-	$(TEST_PYTHON) -c "from maze_solver import MazeSolver; print('MazeSolver import OK ✅')"
-	rm -rf $(TESTENV)
-	@echo "Package tested successfully! ✅"
-
-
-package-check: build-package test-package
-	@echo "Build and installation test completed! 🎉"
+	@echo "Package built and copied to project root! ✅"
 
 
 clean:
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	rm -rf .mypy_cache
-	@echo "Cache files cleaned! 🧹"
+	@echo "Cache files cleaned! ✅"
 
 
 fclean: clean
 	rm -rf build
 	rm -rf dist
 	rm -rf *.egg-info
-	rm -rf $(BUILDENV)
-	rm -rf $(TESTENV)
+	rm -rf $(VENV)
 	rm -f $(OUTPUT_TEST)
-	@echo "Full clean completed! 🗑️"
+	@echo "Full clean completed! ✅"
 
 
-re: fclean all
+re: fclean install all
 
 
-.PHONY: all install run debug lint lint-strict typecheck test \
-	package build-package test-package package-check \
-	clean fclean re
+test-package: package
+	rm -rf testenv
+
+	@echo "Testing WHL..."
+	python3 -m venv testenv
+	testenv/bin/pip install --index-url $(PIP_INDEX) ./mazegen-*.whl
+	cd /tmp && $(CURDIR)/testenv/bin/python -c "from maze_generator import MazeGenerator; from maze_solver import MazeSolver; import maze_generator; m=MazeGenerator(20,20,seed=42,perfect=True); m.generate_maze((0,0),(19,19)); p=MazeSolver(m).path_solver((0,0),(19,19)); print('Module:', maze_generator.__file__); print('WHL OK:', p is not None)"
+
+	rm -rf testenv
+
+	@echo "Testing TAR.GZ..."
+	python3 -m venv testenv
+	testenv/bin/pip install --index-url $(PIP_INDEX) ./mazegen-*.tar.gz
+	cd /tmp && $(CURDIR)/testenv/bin/python -c "from maze_generator import MazeGenerator; from maze_solver import MazeSolver; import maze_generator; m=MazeGenerator(20,20,seed=42,perfect=True); m.generate_maze((0,0),(19,19)); p=MazeSolver(m).path_solver((0,0),(19,19)); print('Module:', maze_generator.__file__); print('TAR.GZ OK:', p is not None)"
+
+
+.PHONY: all install run debug lint lint-strict package \
+	clean pypi fclean re test-package

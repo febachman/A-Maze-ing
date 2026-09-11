@@ -44,7 +44,7 @@ def build_ascii_grid(
                 if shape_42[y - start_y][x - start_x] == "X":
                     is_42_cell = True
 
-            if is_42_cell:
+            if is_42_cell and cell_value == 15:
                 expanded_grid[grid_y][grid_x] = "@"
             else:
                 expanded_grid[grid_y][grid_x] = " "

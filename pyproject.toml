@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,7 +8,9 @@ version = "1.0.0"
 description = "Reusable maze generator developed for the 42 A-Maze-ing project"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { file = "LICENSE.md" }
+
+license = "LicenseRef-Educational-Intra-Project"
+license-files = ["LICENSE.md"]
 
 authors = [
     { name = "fbachman" },
